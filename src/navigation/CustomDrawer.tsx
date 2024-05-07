@@ -1,96 +1,86 @@
-import React, {useState} from 'react';
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {useNavigation} from '@react-navigation/core';
+import React, {useEffect, useState} from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Pressable,
+  ScrollView,
+} from 'react-native';
 
-const CustomDrawer = (props: any) => {
-  const [drawerOpen, setDrawerOpen] = useState(false);
+const CustomDrawer = ({
+  screens,
+  visible,
+  onNavigate,
+  initialRoute,
+  selectedItem,
+  setSelectedItem,
+}: any) => {
+  // const [selectedItem, setSelectedItem] = useState(
+  //   initialRoute || screens[0] || '',
+  // );
+  const navigation = useNavigation();
 
-  const toggleDrawer = () => {
-    setDrawerOpen(!drawerOpen);
+  useEffect(() => {
+    console.log('selectedItem===============', selectedItem);
+  }, [selectedItem, setSelectedItem]);
+
+  const navigate = (screen: any) => {
+    console.log('Current selectedItem:', selectedItem);
+    setSelectedItem(screen); // Update selected item when navigating
+    console.log('New selectedItem:', screen);
+    navigation.navigate(screen);
+    onNavigate();
   };
 
-  return (
-    <View style={styles.container}>
-      {/* Main content */}
-      <View style={styles.mainContent}>
-        <Text>Main Content</Text>
-      </View>
+  if (visible) {
+    return (
+      <ScrollView style={[styles.drawer]}>
+        {screens.map((item: any, index) => (
+          <Pressable
+            key={index}
+            style={[
+              styles.drawerItem,
+              selectedItem === item ? styles.backgroundSelected : null,
+            ]}
+            onPress={() => navigate(item)}>
+            <Text>{item}</Text>
+          </Pressable>
+        ))}
+      </ScrollView>
+    );
+  }
 
-      {/* Custom Drawer */}
-      {/* {drawerOpen && ( */}
-      <View style={styles.drawer}>
-        <TouchableOpacity
-          style={styles.drawerItem}
-          onPress={() => console.log('Navigate to Home')}>
-          <Text>Home</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.drawerItem}
-          onPress={() => console.log('Navigate to Profile')}>
-          <Text>Profile</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.drawerItem}
-          onPress={() => console.log('Navigate to Page 1')}>
-          <Text>Page 1</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.drawerItem}
-          onPress={() => console.log('Navigate to Page 2')}>
-          <Text>Page 2</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.drawerItem}
-          onPress={() => console.log('Navigate to Page 3')}>
-          <Text>Page 3</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.drawerItem}
-          onPress={() => console.log('Navigate to Page 4')}>
-          <Text>Page 4</Text>
-        </TouchableOpacity>
-      </View>
-      {/* )} */}
-
-      {/* Drawer Toggle Button */}
-      <TouchableOpacity
-        style={styles.drawerToggleButton}
-        onPress={toggleDrawer}>
-        <Text>{drawerOpen ? 'Close Drawer' : 'Open Drawer'}</Text>
-      </TouchableOpacity>
-    </View>
-  );
+  return null;
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  mainContent: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   drawer: {
+    flex: 1,
     position: 'absolute',
     left: 0,
     top: 0,
     bottom: 0,
-    width: 200,
+    width: '50%',
+    height: '100%',
     backgroundColor: '#fff',
     elevation: 16,
     paddingTop: 40,
-    paddingHorizontal: 20,
+    paddingHorizontal: 5,
   },
   drawerItem: {
-    marginBottom: 20,
+    marginBottom: 15,
+    width: '90%',
+    height: '12%',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  drawerToggleButton: {
-    position: 'absolute',
-    top: 40,
-    right: 20,
-    padding: 10,
+  backgroundSelected: {
     backgroundColor: 'lightblue',
-    borderRadius: 5,
   },
 });
 
